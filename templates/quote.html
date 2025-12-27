@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+            color: #111827;
+        }
+
+        .card {
+            max-width: 700px;
+            margin: auto;
+            background: #937272;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f3a5f;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .meta {
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 20px;
+        }
+
+        .meta div {
+            margin-bottom: 4px;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .row span {
+            color: #374151;
+        }
+
+        .final {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #16a34a;
+            margin-top: 16px;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: #1f3a5f;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16324f;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .card {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div style="text-align:center; margin-bottom: 10px;">
+    {% if is_pro %}
+        {% if logo_url %}
+        <img src="{{ logo_url }}" alt="Logo" style="max-height:80px; margin-bottom:10px;">
+        {% endif %}
+        <h1>{{ business_name }}</h1>
+    {% else %}
+        <h1>Your business name here</h1>
+    {% endif %}
+    <div style="font-size:0.9rem; color:#6b7280;">Invoice</div>
+</div>
+
+
+    <div class="meta">
+        <div><strong>Invoice Ref:</strong> {{ quote_ref }}</div>
+        <div><strong>Date:</strong> {{ date }}</div>
+        <div>Valid for 7 days</div>
+    </div>
+
+    {% if data.customer_name %}
+    <hr>
+    <div class="meta">
+        <div><strong>Customer:</strong> {{ data.customer_name }}</div>
+
+        {% if data.customer_email %}
+        <div><strong>Email:</strong> {{ data.customer_email }}</div>
+        {% endif %}
+
+        {% if data.notes %}
+        <div><strong>Notes:</strong> {{ data.notes }}</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <div class="row">
+        <span>Price (excl. VAT)</span>
+        <span>{{ data.selling_price }}</span>
+    </div>
+
+    {% if data.vat_amount %}
+    <div class="row">
+        <span>VAT (15%)</span>
+        <span>{{ data.vat_amount }}</span>
+    </div>
+    {% endif %}
+
+    <div class="row final">
+        <span>Total Amount Due</span>
+        <span>{{ data.final_price }}</span>
+    </div>
+
+    <button onclick="window.print()">Print / Save as PDF</button>
+
+</div>
+
+</body>
+</html>

@@ -1,34 +1,246 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>3D Print Pricing Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
-        body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
-        input, button { width: 100%; padding: 8px; margin: 6px 0; }
-        .result { margin-top: 20px; background: #f2f2f2; padding: 10px; }
-    </style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background: #f4f6f8;
+        padding: 20px;
+        color: #111827;
+    }
+
+    .card {
+        max-width: 650px;
+        margin: auto;
+        background: #ffffff;
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        text-align: center;
+        color: #1f3a5f;
+        margin-top: 0;
+    }
+
+    label {
+        display: block;
+        margin-top: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        font-size: 0.95rem;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #1f3a5f;
+        box-shadow: 0 0 0 2px rgba(31,58,95,0.15);
+    }
+
+    button {
+        width: 100%;
+        margin-top: 22px;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: bold;
+        background: #1f3a5f;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #16324f;
+    }
+
+    .results {
+        margin-top: 28px;
+        background: #f9fafb;
+        padding: 18px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .highlight {
+        font-weight: bold;
+        color: #16a34a;
+        font-size: 1.05rem;
+    }
+
+    hr {
+        margin: 16px 0;
+        border: none;
+        border-top: 1px solid #e5e7eb;
+    }.section-title {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #1f3a5f;
+}
+
+.muted {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.results h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #1f3a5f;
+}
+
+.results .row span {
+    color: #374151;
+}
+
+.results .row strong {
+    color: #111827;
+}
+
+.results .row.total {
+    font-size: 1.05rem;
+    padding-top: 8px;
+    border-top: 1px dashed #d1d5db;
+}
+
+.results .row.final strong {
+    color: #16a34a;
+    font-size: 1.2rem;
+}
+
+</style>
+
 </head>
 <body>
 
-<h2>3D Print Pricing Calculator</h2>
+<div class="card">
+    <h2>3D Print Pricing Calculator</h2>
 
-<form method="post">
-    <input name="grams" placeholder="Filament used (grams)" required>
-    <input name="cost_per_kg" placeholder="Filament cost per kg" required>
-    <input name="hours" placeholder="Print time (hours)" required>
-    <input name="hourly_rate" placeholder="Machine hourly rate" required>
-    <input name="margin" placeholder="Target profit margin (%)" required>
-    <button type="submit">Calculate</button>
-</form>
+    <form method="post">
 
-{% if result %}
-<div class="result">
-    <p><strong>Total Cost:</strong> {{ result.total_cost }}</p>
-    <p><strong>Selling Price:</strong> {{ result.selling_price }}</p>
-    <p><strong>Profit:</strong> {{ result.profit }}</p>
-    <p><strong>Margin:</strong> {{ result.margin }}%</p>
+        <label>Currency</label>
+        <select name="currency">
+            <option value="R">R (ZAR)</option>
+            <option value="$">$ (USD)</option>
+            <option value="€">€ (EUR)</option>
+            <option value="£">£ (GBP)</option>
+        </select>
+
+        <label>
+            <input type="checkbox" name="vat"> Apply VAT (15%)
+        </label>
+
+        <hr>
+        <div class="section-title">Customer Details</div>
+
+        <label>Customer Name</label>
+        <input name="customer_name">
+
+        <label>Customer Email</label>
+        <input name="customer_email">
+
+        <label>Notes</label>
+        <input name="notes">
+
+        <hr>
+        <div class="section-title">Print Inputs</div>
+
+        <label>Filament Used (grams)</label>
+        <input name="grams" required>
+
+        <label>Filament Cost per kg</label>
+        <input name="cost_per_kg" required>
+
+        <label>Print Time (hours)</label>
+        <input name="hours" required>
+
+        <label>Machine Hourly Rate</label>
+        <input name="hourly_rate" required>
+
+        <label>Printer Power (Watts)</label>
+        <input name="power_watts">
+
+        <label>Electricity Cost per kWh</label>
+        <input name="electricity_rate">
+
+        <label>Labour Hours</label>
+        <input name="labour_hours">
+
+        <label>Labour Rate</label>
+        <input name="labour_rate">
+
+        <label>Profit Margin</label>
+        <input name="margin" required>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    {% if result %}
+    <div class="results">
+        <h3>Internal Cost Breakdown</h3>
+
+        <div class="row"><span>Filament Cost</span><span>{{ result.filament_cost }}</span></div>
+        <div class="row"><span>Machine Cost</span><span>{{ result.machine_cost }}</span></div>
+        <div class="row"><span>Electricity Cost</span><span>{{ result.electricity_cost }}</span></div>
+        <div class="row"><span>Labour Cost</span><span>{{ result.labour_cost }}</span></div>
+
+        <hr>
+
+        <div class="row"><span>Total Cost</span><span>{{ result.total_cost }}</span></div>
+        <div class="row"><span>Selling Price (excl. VAT)</span><span>{{ result.selling_price }}</span></div>
+
+        {% if result.vat_enabled %}
+        <div class="row"><span>VAT (15)</span><span>{{ result.vat_amount }}</span></div>
+        {% endif %}
+
+        <div class="row final">
+    <span><strong>Final Price</strong></span>
+    <strong>{{ result.final_price }}</strong>
 </div>
-{% endif %}
+
+
+        <hr>
+
+        <div class="row"><span>Profit</span><span>{{ result.profit }}</span></div>
+        <div class="row"><span>Margin</span><span>{{ result.margin }}</span></div>
+    </div>
+
+    <form action="/quote" method="get" target="_blank">
+        {% for key, value in result.items() %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endfor %}
+        <input type="hidden" name="customer_name" value="{{ request.form.customer_name }}">
+        <input type="hidden" name="customer_email" value="{{ request.form.customer_email }}">
+        <input type="hidden" name="notes" value="{{ request.form.notes }}">
+        <button type="submit">Print / Save Quote</button>
+    </form>
+    {% endif %}
+
+</div>
 
 </body>
 </html>
