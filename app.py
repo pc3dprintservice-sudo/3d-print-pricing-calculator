@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-IS_PRO = True  # ← change to True to enable Pro features
+IS_PRO = False  # ← change to True to enable Pro features
 app = Flask(__name__)
 import datetime
 def to_float(value):
