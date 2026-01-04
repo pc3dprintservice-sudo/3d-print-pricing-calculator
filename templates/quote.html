@@ -59,15 +59,19 @@
 <div class="card">
 
     {% if is_pro %}
-        {% if data.logo_url %}
-        <div style="text-align:center; margin-bottom:10px;">
-            <img src="{{ data.logo_url }}" style="max-height:80px;">
-        </div>
-        {% endif %}
-        <h1 style="text-align:center;">{{ data.business_name }}</h1>
-    {% else %}
-        <h1 style="text-align:center;">Your business name here</h1>
+    {% if data.logo_url %}
+    <div style="text-align:center; margin-bottom:10px;">
+        <img src="{{ data.logo_url }}" style="max-height:80px;">
+    </div>
     {% endif %}
+    <h1 style="text-align:center;">{{ data.business_name }}</h1>
+{% else %}
+    <h1 style="text-align:center;">Your business name here</h1>
+    <div style="text-align:center; font-size:0.8rem; color:#6b7280; margin-top:4px;">
+        🔒 Business branding available in <strong>Pro</strong>
+    </div>
+{% endif %}
+
 
     <div style="text-align:center; color:#6b7280; margin-bottom:20px;">
         Invoice

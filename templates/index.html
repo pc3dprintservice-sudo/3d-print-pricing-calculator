@@ -1,193 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>3D Print Pricing Calculator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>3D Print Cost Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 20px;
-        }
-        .card {
-            max-width: 720px;
-            margin: auto;
-            background: #ffffff;
-            padding: 28px;
-            border-radius: 12px;
-        }
-        h2 {
-            text-align: center;
-            margin-top: 0;
-        }
-        .section-title {
-            margin-top: 24px;
-            font-weight: bold;
-            color: #1f3a5f;
-        }
-        label {
-            display: block;
-            margin-top: 12px;
-            font-weight: 600;
-        }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 8px;
-            border: 2px solid #cbd5e1;
-        }
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 14px;
-            background: #1f3a5f;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-        .results {
-            margin-top: 24px;
-            background: #f9fafb;
-            padding: 18px;
-            border-radius: 10px;
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin: 6px 0;
-        }
-        .highlight {
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #16a34a;
-        }
-        hr {
-            margin: 18px 0;
-            border: none;
-            border-top: 1px solid #e5e7eb;
-        }
-    </style>
+<style>
+body {
+    font-family: system-ui, sans-serif;
+    background: #f4f6f8;
+    padding: 20px;
+}
+
+.card {
+    max-width: 760px;
+    margin: auto;
+    background: white;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+button {
+    margin-top: 28px;
+    padding: 16px;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    background: #1f3a5f;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.results {
+    margin-top: 32px;
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+}
+
+.section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.final {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #16a34a;
+}
+
+@media print {
+    .screen-only {
+        display: none !important;
+    }
+    form, button, h2 {
+        display: none !important;
+    }
+}
+</style>
 </head>
+
 <body>
-
 <div class="card">
-    <h2>3D Print Pricing Calculator</h2>
+<h2>3D Print Cost Calculator</h2>
 
-    <form method="post" enctype="multipart/form-data" autocomplete="off">
+<form method="post">
 
-        <div class="section-title">General</div>
+<label>Business name</label>
+<input name="business_name">
 
-        <label>Currency</label>
-        <select name="currency">
-            <option value="R">R (ZAR)</option>
-            <option value="$">$ (USD)</option>
-            <option value="€">€ (EUR)</option>
-            <option value="£">£ (GBP)</option>
-        </select>
+<label>Product / job description</label>
+<input name="description">
 
-        <label>
-            <input type="checkbox" name="vat"> Apply VAT (15%)
-        </label>
+<label>Filament type</label>
+<select name="filament_type">
+    <option value="">Select filament</option>
+    <option value="PLA">PLA</option>
+    <option value="PETG">PETG</option>
+    <option value="ABS">ABS</option>
+    <option value="TPU">TPU</option>
+</select>
 
-        {% if is_pro %}
-        <hr>
-        <div class="section-title">Branding (Pro)</div>
+<label>Currency</label>
+<select name="currency">
+    <option value="R">R (ZAR)</option>
+    <option value="$">$ (USD)</option>
+    <option value="€">€ (EUR)</option>
+    <option value="£">£ (GBP)</option>
+</select>
 
-        <label>Business Name</label>
-        <input name="business_name">
+<label><input type="checkbox" name="vat"> Apply VAT (15%)</label>
 
-        <label>Logo</label>
-        <input type="file" name="logo" accept="image/*">
-        {% endif %}
+<label>Quantity</label>
+<input name="quantity" value="1">
 
-        <hr>
-        <div class="section-title">Job Details</div>
-
-        <label>Description</label>
-        <input name="description" placeholder="e.g. Custom phone stand">
-
-        <hr>
-        <div class="section-title">Filament</div>
-
-        <label>Filament Used (grams)</label>
-        <input name="grams" required>
-
-        <label>Cost per kg</label>
-        <input name="cost_per_kg" required>
-
-        <hr>
-        <div class="section-title">Machine</div>
-
-        <label>Print Time (hours)</label>
-        <input name="hours" required>
-
-        <label>Machine Hourly Rate</label>
-        <input name="hourly_rate" required>
-
-        <label>Power Usage (watts)</label>
-        <input name="power_watts">
-
-        <label>Electricity Cost per kWh</label>
-        <input name="electricity_rate">
-
-        <hr>
-        <div class="section-title">Labour</div>
-
-        <label>Labour Hours</label>
-        <input name="labour_hours">
-
-        <label>Labour Rate</label>
-        <input name="labour_rate">
-
-        <hr>
-        <div class="section-title">Pricing</div>
-
-        <label>Profit Margin (%)</label>
-        <input name="margin" required>
-
-        <button type="submit">Calculate</button>
-    </form>
-
-    {% if result %}
-    <div class="results">
-
-        <div class="section-title">Cost Breakdown</div>
-
-        <div class="row"><span>Filament</span><span>{{ result.filament_cost }}</span></div>
-        <div class="row"><span>Machine</span><span>{{ result.machine_cost }}</span></div>
-        <div class="row"><span>Electricity</span><span>{{ result.electricity_cost }}</span></div>
-        <div class="row"><span>Labour</span><span>{{ result.labour_cost }}</span></div>
-
-        <hr>
-
-        <div class="row"><strong>Total Cost</strong><strong>{{ result.total_cost }}</strong></div>
-
-        {% if result.vat_enabled %}
-        <div class="row"><span>VAT</span><span>{{ result.vat_amount }}</span></div>
-        {% endif %}
-
-        <div class="row">
-            <strong>Final Price</strong>
-            <strong class="highlight">{{ result.final_price }}</strong>
-        </div>
-
+<div class="row">
+    <div>
+        <label>Filament used (grams)</label>
+        <input name="grams">
     </div>
-
-    <form action="/quote" method="get" target="_blank">
-        {% for key, value in result.items() %}
-            {% if value is not none %}
-            <input type="hidden" name="{{ key }}" value="{{ value }}">
-            {% endif %}
-        {% endfor %}
-        <button type="submit">Print / Save Invoice</button>
-    </form>
-    {% endif %}
-
+    <div>
+        <label>Cost per kg</label>
+        <input name="cost_per_kg">
+    </div>
 </div>
 
-</body>
-</html>
+<div class="row">
+    <div>
+        <label>Print time (hours)</label>
+        <input name="hours">
+    </div>
+    <div>
+        <label>Machine rate / hour</label>
+        <input name="hourly_rate">
+    </div>
+</div>
+
+<div class="row">
+    <div>
+        <label>Power usage (Watts)</label>
+        <input name="power_watts">
+    </div>
+    <div>
+        <label>Electricity cost / kWh</label>
+        <input name="electricity_rate">
+    </div>
+</div>
+
+<div class="row">
+    <div>
+        <label>Labour hours</label>
+        <input name="labour_hours">
+    </div>
+    <div>
+        <label>Labour rate</label>
+        <input name="labour_rate">
+    </div>
+</div>
+
+<label>Profit margin (%)</label>
+<input name="margin">
+
+<label>Waste / failure allowance (%)</label>
+<input name="waste_percent" value="0">
+
+<button type="submit">Calculate</button>
+</form>
+
+{% if result %}
+
+{% if is_pro %}
+<div class="results screen-only">
+    <div class="section-title">Internal cost summary</div>
+    <div class="line"><span>Filament</span><span>{{ result.filament_cost }}</span></div>
+    <div class="line"><span>Machine</span><span>{{ result.machine_cost }}</span></div>
+    <div class="line"><span>Electricity</span><span>{{ result.electricity_cost }}</span></div>
+    <div class="line"><span>Labour</span><span>{{ result.labour_cost }}</span></div>
+    <div class="line"><span>Waste</span><span>{{ result.waste_percent }}</span></div>
+    <div class="line"><strong>Total internal cost</strong><strong>{{ result.total_cost }}</strong></div>
+</div>
+{% endif %}
+
+<div class="results">
+    <h3>Invoice</h3>
+
+    <div class="line">
+        <span>Invoice number</span>
+        <span>{{ result.invoice_number }}</span>
+    </div>
+
+    {% if result.business_name %}
+    <div class="section-title">Business</div>
+    <div>{{ result.business_name }}</div>
+    {% endif %}
+
+    {% if result.description %}
+    <div class="section-title">Description</div>
+    <div>{{ result.description }}</div>
+    {% endif %}
+
+    <div class="line final">
+        <span>Final price</span>
+        <span>{{ result.final_price }}</span>
+    </div>
+
+    <button type="button" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+{% endif %}
+
