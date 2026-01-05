@@ -1,91 +1,91 @@
 from flask import Flask, render_template, request
-IS_PRO = False  # ← change to True to enable Pro features
+import uuid
+import os
+
 app = Flask(__name__)
-import datetime
-def to_float(value):
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return 0.0
-    
+
+# =========================
+# MODE TOGGLE
+# =========================
+IS_PRO = False   # Change to False for Free mode
+
+
+# =========================
+# MAIN CALCULATOR
+# =========================
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
 
     if request.method == "POST":
-        # Meta
-        invoice_number = datetime.datetime.now().strftime("INV-%Y%m%d-%H%M%S")
-        business_name = request.form.get("business_name", "").strip()
-        description = request.form.get("description", "").strip()
-        filament_type = request.form.get("filament_type", "")
+        # -------- Basic inputs --------
+        business_name = request.form.get("business_name", "")
+        description = request.form.get("description", "")
         currency = request.form.get("currency", "R")
-        vat_enabled = request.form.get("vat") == "on"
+        quantity = int(request.form.get("quantity", 1))
 
-        # Inputs
-        grams = to_float(request.form.get("grams"))
-        cost_per_kg = to_float(request.form.get("cost_per_kg"))
-        hours = to_float(request.form.get("hours"))
-        hourly_rate = to_float(request.form.get("hourly_rate"))
-        power_watts = to_float(request.form.get("power_watts"))
-        electricity_rate = to_float(request.form.get("electricity_rate"))
-        labour_hours = to_float(request.form.get("labour_hours"))
-        labour_rate = to_float(request.form.get("labour_rate"))
-        margin = to_float(request.form.get("margin")) / 100
-        waste_percent = to_float(request.form.get("waste_percent")) / 100
+        # -------- Pro-only inputs --------
+        filament_type = request.form.get("filament_type", "") if IS_PRO else ""
+        banking_details = request.form.get("banking_details", "") if IS_PRO else ""
 
-        try:
-            quantity = int(request.form.get("quantity", 1))
-        except ValueError:
-            quantity = 1
+        # -------- Cost inputs --------
+        grams = float(request.form.get("grams", 0))
+        cost_per_kg = float(request.form.get("cost_per_kg", 0))
+        hours = float(request.form.get("hours", 0))
+        hourly_rate = float(request.form.get("hourly_rate", 0))
+        power_watts = float(request.form.get("power_watts", 0))
+        electricity_rate = float(request.form.get("electricity_rate", 0))
+        labour_hours = float(request.form.get("labour_hours", 0))
+        labour_rate = float(request.form.get("labour_rate", 0))
+        margin = float(request.form.get("margin", 0)) / 100
+        waste = float(request.form.get("waste_percent", 0)) / 100
 
-        # Costs
+        # -------- Calculations --------
         filament_cost = (grams / 1000) * cost_per_kg
         machine_cost = hours * hourly_rate
         electricity_cost = (power_watts / 1000) * hours * electricity_rate
         labour_cost = labour_hours * labour_rate
 
-        variable_cost = filament_cost + electricity_cost
-        adjusted_variable_cost = variable_cost * (1 + waste_percent)
+        internal_cost = (filament_cost + machine_cost + electricity_cost + labour_cost)
+        internal_cost *= (1 + waste)
 
-        fixed_cost = machine_cost + labour_cost
-        total_cost = (adjusted_variable_cost * quantity) + fixed_cost
+        unit_price = internal_cost / (1 - margin) if margin < 1 else internal_cost
+        total_price = unit_price * quantity
 
-        selling_price = total_cost / (1 - margin) if margin < 1 else 0
-        price_per_unit = selling_price / quantity if quantity else 0
-
-        vat_amount = selling_price * 0.15 if vat_enabled else 0
-        final_price = selling_price + vat_amount
-
+        # -------- Result payload --------
         result = {
-            "invoice_number": invoice_number,
+            "invoice_number": str(uuid.uuid4())[:8].upper(),
             "business_name": business_name,
             "description": description,
             "filament_type": filament_type,
+            "banking_details": banking_details,
+            "quantity": quantity,
 
-            "filament_cost": f"{currency}{filament_cost:.2f}",
-            "machine_cost": f"{currency}{machine_cost:.2f}",
-            "electricity_cost": f"{currency}{electricity_cost:.2f}",
-            "labour_cost": f"{currency}{labour_cost:.2f}",
-            "waste_percent": f"{waste_percent * 100:.0f}%",
-            "total_cost": f"{currency}{total_cost:.2f}",
+            "unit_price": f"{currency}{unit_price:,.2f}",
+            "total_price": f"{currency}{total_price:,.2f}",
 
-            "price_per_unit": f"{currency}{price_per_unit:.2f}",
-            "final_price": f"{currency}{final_price:.2f}",
-            "vat_amount": f"{currency}{vat_amount:.2f}",
-            "vat_enabled": vat_enabled,
-            "quantity": quantity
+            # Internal costs (Pro only display)
+            "filament_cost": f"{currency}{filament_cost:,.2f}",
+            "machine_cost": f"{currency}{machine_cost:,.2f}",
+            "electricity_cost": f"{currency}{electricity_cost:,.2f}",
+            "labour_cost": f"{currency}{labour_cost:,.2f}",
+            "internal_cost": f"{currency}{internal_cost:,.2f}",
         }
 
-    return render_template(
-    "index.html",
-    result=result,
-    is_pro=IS_PRO
-)
+    return render_template("index.html", result=result, is_pro=IS_PRO)
 
-if __name__ == "__main__":
-   import os
 
+# =========================
+# FREE vs PRO PAGE
+# =========================
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html", is_pro=IS_PRO)
+
+
+# =========================
+# RUN SERVER
+# =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
-
+    app.run(host="0.0.0.0", port=port, debug=True)

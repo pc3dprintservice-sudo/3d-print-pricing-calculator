@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Free vs Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: system-ui, sans-serif;
+    background: #2f3e46;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    font-family: Georgia, serif;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    opacity: 0.85;
+    margin-bottom: 30px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: #354f52;
+    padding: 28px;
+    border-radius: 14px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #52796f;
+}
+
+th {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+}
+
+.feature {
+    text-align: left;
+}
+
+.check {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.cross {
+    color: #f87171;
+    font-weight: bold;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    margin-left: 6px;
+}
+
+.pro {
+    background: #1f2937;
+    color: #facc15;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+button {
+    padding: 14px 26px;
+    border-radius: 10px;
+    border: none;
+    background: #52796f;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Free vs Pro</h1>
+<div class="subtitle">
+Choose the plan that fits your workflow
+</div>
+
+<table>
+<thead>
+<tr>
+    <th class="feature">Feature</th>
+    <th>Free</th>
+    <th>Pro</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+    <td class="feature">Full basic calculator</td>
+    <td class="check">✔</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">Multiple currency support</td>
+    <td class="check">✔</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">Filament type selection</td>
+    <td class="cross">✖</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">
+        Internal cost breakdown
+        <span class="badge pro">PRO</span>
+    </td>
+    <td class="cross">✖</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">
+        Branded invoice (business name)
+        <span class="badge pro">PRO</span>
+    </td>
+    <td class="cross">✖</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">
+        Product description on invoice
+        <span class="badge pro">PRO</span>
+    </td>
+    <td class="cross">✖</td>
+    <td class="check">✔</td>
+</tr>
+
+<tr>
+    <td class="feature">
+        Banking details on invoice
+        <span class="badge pro">PRO</span>
+    </td>
+    <td class="cross">✖</td>
+    <td class="check">✔</td>
+</tr>
+
+</tbody>
+</table>
+
+<div class="footer">
+<button onclick="window.location.href='/'">
+← Back to Calculator
+</button>
+</div>
+
+</div>
+</body>
+</html>

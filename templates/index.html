@@ -4,75 +4,80 @@
 <meta charset="UTF-8">
 <title>3D Print Cost Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div style="text-align:center;margin-bottom:12px;">
+    <a href="/pricing" style="color:#cbd5e1;text-decoration:underline;">
+        Free vs Pro
+    </a>
+</div>
+
 
 <style>
 body {
     font-family: system-ui, sans-serif;
-    background: #f4f6f8;
+    background: #2f3e46;
+    color: white;
     padding: 20px;
 }
 
-.card {
-    max-width: 760px;
-    margin: auto;
-    background: white;
-    padding: 28px;
-    border-radius: 14px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+h2, h3, .section-title {
+    font-family: Georgia, serif;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.card {
+    max-width: 900px;
+    margin: auto;
+    background: #354f52;
+    padding: 28px;
+    border-radius: 14px;
 }
 
 label {
-    display: block;
     font-weight: 600;
     margin-top: 12px;
+    display: block;
 }
 
-input, select {
+input, select, textarea {
     width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border-radius: 10px;
-    border: 2px solid #e5e7eb;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
 }
 
 .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.row > div {
+    flex: 1;
+    min-width: 180px;
 }
 
 button {
-    margin-top: 28px;
-    padding: 16px;
-    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    width: 240px;
     border: none;
-    border-radius: 12px;
-    background: #1f3a5f;
+    border-radius: 10px;
+    background: #52796f;
     color: white;
-    font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
 }
 
 .results {
-    margin-top: 32px;
-    background: #f9fafb;
+    margin-top: 30px;
+    background: #3a5a40;
     padding: 20px;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
+    border-radius: 12px;
 }
 
 .section-title {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    color: #6b7280;
-    font-weight: 700;
-    margin-bottom: 8px;
+    margin: 14px 0 6px;
 }
 
 .line {
@@ -83,104 +88,97 @@ button {
 
 .final {
     font-size: 1.4rem;
-    font-weight: 800;
-    color: #16a34a;
+    font-weight: bold;
+}
+
+.screen-only {
+    margin-top: 12px;
+    color: #cbd5e1;
 }
 
 @media print {
-    .screen-only {
-        display: none !important;
-    }
-    form, button, h2 {
-        display: none !important;
-    }
+    body { background: white; color: black; }
+    form, button, .screen-only { display: none !important; }
 }
 </style>
 </head>
 
 <body>
 <div class="card">
+
+{% if not result %}
 <h2>3D Print Cost Calculator</h2>
+{% endif %}
 
 <form method="post">
 
-<label>Business name</label>
-<input name="business_name">
+<div class="row">
+    <div>
+        <label>Business name</label>
+        <input name="business_name">
+    </div>
+    <div>
+        <label>Currency</label>
+        <select name="currency">
+            <option value="R">ZAR (R)</option>
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="A$">AUD</option>
+            <option value="C$">CAD</option>
+        </select>
+    </div>
+</div>
 
-<label>Product / job description</label>
+<label>Description</label>
 <input name="description">
-
-<label>Filament type</label>
-<select name="filament_type">
-    <option value="">Select filament</option>
-    <option value="PLA">PLA</option>
-    <option value="PETG">PETG</option>
-    <option value="ABS">ABS</option>
-    <option value="TPU">TPU</option>
-</select>
-
-<label>Currency</label>
-<select name="currency">
-    <option value="R">R (ZAR)</option>
-    <option value="$">$ (USD)</option>
-    <option value="€">€ (EUR)</option>
-    <option value="£">£ (GBP)</option>
-</select>
-
-<label><input type="checkbox" name="vat"> Apply VAT (15%)</label>
 
 <label>Quantity</label>
 <input name="quantity" value="1">
 
+{% if is_pro %}
+<label>Filament type</label>
+<select name="filament_type">
+    <option>PLA</option>
+    <option>PLA+</option>
+    <option>PETG</option>
+    <option>ABS</option>
+    <option>ASA</option>
+    <option>TPU</option>
+    <option>Nylon</option>
+</select>
+{% else %}
+<div class="screen-only">🔒 Filament selection available in Pro</div>
+{% endif %}
+
+<div class="section-title">Material & Machine</div>
 <div class="row">
-    <div>
-        <label>Filament used (grams)</label>
-        <input name="grams">
-    </div>
-    <div>
-        <label>Cost per kg</label>
-        <input name="cost_per_kg">
-    </div>
+    <div><label>Filament (g)</label><input name="grams"></div>
+    <div><label>Cost per kg</label><input name="cost_per_kg"></div>
+    <div><label>Print hours</label><input name="hours"></div>
+    <div><label>Machine rate</label><input name="hourly_rate"></div>
 </div>
 
+<div class="section-title">Power & Labour</div>
 <div class="row">
-    <div>
-        <label>Print time (hours)</label>
-        <input name="hours">
-    </div>
-    <div>
-        <label>Machine rate / hour</label>
-        <input name="hourly_rate">
-    </div>
+    <div><label>Power (W)</label><input name="power_watts"></div>
+    <div><label>Electricity / kWh</label><input name="electricity_rate"></div>
+    <div><label>Labour hours</label><input name="labour_hours"></div>
+    <div><label>Labour rate</label><input name="labour_rate"></div>
 </div>
 
+<div class="section-title">Pricing</div>
 <div class="row">
-    <div>
-        <label>Power usage (Watts)</label>
-        <input name="power_watts">
-    </div>
-    <div>
-        <label>Electricity cost / kWh</label>
-        <input name="electricity_rate">
-    </div>
+    <div><label>Margin (%)</label><input name="margin"></div>
+    <div><label>Waste (%)</label><input name="waste_percent" value="0"></div>
 </div>
 
-<div class="row">
-    <div>
-        <label>Labour hours</label>
-        <input name="labour_hours">
-    </div>
-    <div>
-        <label>Labour rate</label>
-        <input name="labour_rate">
-    </div>
-</div>
-
-<label>Profit margin (%)</label>
-<input name="margin">
-
-<label>Waste / failure allowance (%)</label>
-<input name="waste_percent" value="0">
+{% if is_pro %}
+<label>Banking details</label>
+<textarea name="banking_details" rows="3"></textarea>
+{% else %}
+<div class="screen-only">🔒 Banking details available in Pro</div>
+{% endif %}
 
 <button type="submit">Calculate</button>
 </form>
@@ -189,41 +187,50 @@ button {
 
 {% if is_pro %}
 <div class="results screen-only">
-    <div class="section-title">Internal cost summary</div>
+    <div class="section-title">Internal cost breakdown</div>
     <div class="line"><span>Filament</span><span>{{ result.filament_cost }}</span></div>
     <div class="line"><span>Machine</span><span>{{ result.machine_cost }}</span></div>
     <div class="line"><span>Electricity</span><span>{{ result.electricity_cost }}</span></div>
     <div class="line"><span>Labour</span><span>{{ result.labour_cost }}</span></div>
-    <div class="line"><span>Waste</span><span>{{ result.waste_percent }}</span></div>
-    <div class="line"><strong>Total internal cost</strong><strong>{{ result.total_cost }}</strong></div>
+    <div class="line"><strong>Total internal</strong><strong>{{ result.internal_cost }}</strong></div>
 </div>
+{% else %}
+<div class="screen-only">🔒 Cost breakdown available in Pro</div>
 {% endif %}
 
 <div class="results">
-    <h3>Invoice</h3>
-
-    <div class="line">
-        <span>Invoice number</span>
-        <span>{{ result.invoice_number }}</span>
-    </div>
-
-    {% if result.business_name %}
-    <div class="section-title">Business</div>
-    <div>{{ result.business_name }}</div>
+    {% if is_pro and result.business_name %}
+    <h2>{{ result.business_name }}</h2>
     {% endif %}
 
-    {% if result.description %}
+    <h3>Invoice</h3>
+
+    <div class="line"><span>Invoice #</span><span>{{ result.invoice_number }}</span></div>
+
+    {% if is_pro and result.description %}
     <div class="section-title">Description</div>
     <div>{{ result.description }}</div>
     {% endif %}
 
-    <div class="line final">
-        <span>Final price</span>
-        <span>{{ result.final_price }}</span>
-    </div>
+    {% if is_pro and result.filament_type %}
+    <div class="section-title">Material</div>
+    <div>{{ result.filament_type }}</div>
+    {% endif %}
 
-    <button type="button" onclick="window.print()">Print / Save PDF</button>
+    <div class="line"><span>Unit price</span><span>{{ result.unit_price }}</span></div>
+    <div class="line final"><span>Total</span><span>{{ result.total_price }}</span></div>
+
+    {% if is_pro and result.banking_details %}
+    <hr>
+    <div class="section-title">Banking details</div>
+    <div style="white-space: pre-line;">{{ result.banking_details }}</div>
+    {% endif %}
+
+    <button onclick="window.print()">Print / Save PDF</button>
 </div>
 
 {% endif %}
 
+</div>
+</body>
+</html>
