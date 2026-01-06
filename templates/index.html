@@ -39,9 +39,17 @@ label {
 
 input, select, textarea {
     width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
+    padding: 12px;
+    border-radius: 10px;
+
+    /* Darker, professional border */
+    border: 2px solid #1f2937; /* dark navy grey */
+
+    background: #ffffff;
+    color: #111827;
+
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
 }
 
 .row {
@@ -95,10 +103,79 @@ button {
     margin-top: 12px;
     color: #cbd5e1;
 }
+/* === Input layout rows === */
+.row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    margin-bottom: 14px;
+}
+
+/* Ensure inputs don’t overflow into each other */
+input, select, textarea {
+    box-sizing: border-box;
+}
+
+/* Slight inner spacing so fields never visually touch */
+.row > div {
+    padding-right: 4px;
+}
+
 
 @media print {
     body { background: white; color: black; }
     form, button, .screen-only { display: none !important; }
+}
+/* ===== Invoice Typography ===== */
+
+.invoice-title {
+    font-family: Georgia, serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #111827;
+}
+
+.invoice-subtle {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.invoice-section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.invoice-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.invoice-line span:last-child {
+    font-weight: 600;
+}
+
+.invoice-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-top: 10px;
+    color: #16a34a;
+}
+
+.invoice-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 12px 0;
 }
 </style>
 </head>
@@ -156,7 +233,7 @@ button {
     <div><label>Filament (g)</label><input name="grams"></div>
     <div><label>Cost per kg</label><input name="cost_per_kg"></div>
     <div><label>Print hours</label><input name="hours"></div>
-    <div><label>Machine rate</label><input name="hourly_rate"></div>
+    <div><label>Machine rate (<span class="currency-label">{{ currency or "R" }}</span> / hour)</label><input name="hourly_rate"></div>
 </div>
 
 <div class="section-title">Power & Labour</div>
@@ -164,7 +241,7 @@ button {
     <div><label>Power (W)</label><input name="power_watts"></div>
     <div><label>Electricity / kWh</label><input name="electricity_rate"></div>
     <div><label>Labour hours</label><input name="labour_hours"></div>
-    <div><label>Labour rate</label><input name="labour_rate"></div>
+    <div><label>Labour rate (<span class="currency-label">{{ currency or "R" }}</span> / hour)</label><input name="labour_rate"></div>
 </div>
 
 <div class="section-title">Pricing</div>
@@ -230,6 +307,18 @@ button {
 </div>
 
 {% endif %}
+<script>
+const currencySelect = document.querySelector('select[name="currency"]');
+const currencyLabels = document.querySelectorAll('.currency-label');
+
+if (currencySelect) {
+    currencySelect.addEventListener('change', () => {
+        currencyLabels.forEach(label => {
+            label.textContent = currencySelect.value;
+        });
+    });
+}
+</script>
 
 </div>
 </body>

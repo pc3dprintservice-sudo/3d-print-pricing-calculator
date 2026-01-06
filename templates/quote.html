@@ -6,53 +6,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
-        }
-        .card {
-            max-width: 700px;
-            margin: auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 4px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-        }
-        hr {
-            margin: 18px 0;
-            border: none;
-            border-top: 1px solid #e5e7eb;
-        }
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        .footer {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-top: 12px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 12px;
-            width: 100%;
-        }
-    </style>
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f4f6f8;
+    padding: 40px;
+    color: #111827;
+}
+
+.card {
+    max-width: 720px;
+    margin: auto;
+    background: #ffffff;
+    padding: 36px;
+    border-radius: 14px;
+}
+
+/* ===== Header ===== */
+
+.invoice-title {
+    font-family: Georgia, serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.invoice-subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+/* ===== Meta rows ===== */
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin: 6px 0;
+}
+
+hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ===== Sections ===== */
+
+.section-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* ===== Line items ===== */
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.line span:last-child {
+    font-weight: 600;
+}
+
+/* ===== Total ===== */
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-top: 10px;
+}
+
+/* ===== Footer ===== */
+
+.footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 18px;
+}
+
+button {
+    margin-top: 28px;
+    padding: 14px;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+/* ===== Print ===== */
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+    button {
+        display: none;
+    }
+}
+</style>
 </head>
 <body>
 
@@ -60,17 +125,26 @@
 
     {% if is_pro %}
     {% if data.logo_url %}
-    <div style="text-align:center; margin-bottom:10px;">
+    <div style="text-align:center; margin-bottom:12px;">
         <img src="{{ data.logo_url }}" style="max-height:80px;">
     </div>
     {% endif %}
-    <h1 style="text-align:center;">{{ data.business_name }}</h1>
+
+    <div class="invoice-title">
+        {{ data.business_name }}
+    </div>
 {% else %}
-    <h1 style="text-align:center;">Your business name here</h1>
-    <div style="text-align:center; font-size:0.8rem; color:#6b7280; margin-top:4px;">
+    <div class="invoice-title">
+        Your business name here
+    </div>
+    <div class="invoice-subtitle">
         🔒 Business branding available in <strong>Pro</strong>
     </div>
 {% endif %}
+
+<div class="invoice-subtitle">
+    Invoice
+</div>
 
 
     <div style="text-align:center; color:#6b7280; margin-bottom:20px;">
@@ -79,7 +153,7 @@
 
     <hr>
 
-    <div class="row">
+    <div class="meta-row">
         <span><strong>Invoice Ref</strong></span>
         <span>{{ invoice_ref }}</span>
     </div>
@@ -91,23 +165,26 @@
 
     <hr>
 
-    <div class="section-title">Description</div>
-    <p>{{ data.description }}</p>
-
-    <hr>
-
     <div class="section-title">Charges</div>
 
-    <div class="row">
-        <span>{{ data.description }}</span>
-        <span>{{ data.selling_price }}</span>
-    </div>
+<div class="line">
+    <span>{{ data.description }}</span>
+    <span>{{ data.selling_price }}</span>
+</div>
 
-    {% if data.vat_amount %}
-    <div class="row">
-        <span>VAT</span>
-        <span>{{ data.vat_amount }}</span>
-    </div>
+{% if data.vat_amount %}
+<div class="line">
+    <span>VAT</span>
+    <span>{{ data.vat_amount }}</span>
+</div>
+{% endif %}
+
+<hr>
+
+<div class="total">
+    <span>Total</span>
+    <span>{{ data.final_price }}</span>
+</div>
     {% endif %}
 
     <hr>
@@ -118,11 +195,10 @@
     </div>
 
     {% if not is_pro %}
-    <hr>
-    <div style="text-align:center; font-size:0.8rem; color:#9ca3af;">
-        Generated with Free Version
-    </div>
-    {% endif %}
+<div class="footer">
+    Generated with Free Version
+</div>
+{% endif %}
 
     <button onclick="window.print()">Print / Save as PDF</button>
 
