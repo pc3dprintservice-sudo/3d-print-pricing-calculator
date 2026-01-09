@@ -192,70 +192,104 @@ input, select, textarea {
 <div class="row">
     <div>
         <label>Business name</label>
-        <input name="business_name">
+        <input name="business_name" value="{{ form.get('business_name','') }}">
     </div>
     <div>
         <label>Currency</label>
         <select name="currency">
-            <option value="R">ZAR (R)</option>
-            <option value="$">USD ($)</option>
-            <option value="€">EUR (€)</option>
-            <option value="£">GBP (£)</option>
-            <option value="A$">AUD</option>
-            <option value="C$">CAD</option>
+            <option value="R" {{ 'selected' if form.get('currency','R') == 'R' else '' }}>ZAR (R)</option>
+            <option value="$" {{ 'selected' if form.get('currency') == '$' else '' }}>USD ($)</option>
+            <option value="€" {{ 'selected' if form.get('currency') == '€' else '' }}>EUR (€)</option>
+            <option value="£" {{ 'selected' if form.get('currency') == '£' else '' }}>GBP (£)</option>
+            <option value="A$" {{ 'selected' if form.get('currency') == 'A$' else '' }}>AUD</option>
+            <option value="C$" {{ 'selected' if form.get('currency') == 'C$' else '' }}>CAD</option>
         </select>
     </div>
 </div>
 
+
 <label>Description</label>
-<input name="description">
+<input name="description" value="{{ form.get('description','') }}">
 
 <label>Quantity</label>
-<input name="quantity" value="1">
+<input name="quantity" value="{{ form.get('quantity','1') }}">
+
 
 {% if is_pro %}
 <label>Filament type</label>
 <select name="filament_type">
-    <option>PLA</option>
-    <option>PLA+</option>
-    <option>PETG</option>
-    <option>ABS</option>
-    <option>ASA</option>
-    <option>TPU</option>
-    <option>Nylon</option>
+    {% for f in ['PLA','PLA+','PETG','ABS','ASA','TPU','Nylon'] %}
+    <option {{ 'selected' if form.get('filament_type') == f else '' }}>{{ f }}</option>
+    {% endfor %}
 </select>
 {% else %}
 <div class="screen-only">🔒 Filament selection available in Pro</div>
 {% endif %}
 
+
 <div class="section-title">Material & Machine</div>
 <div class="row">
-    <div><label>Filament (g)</label><input name="grams"></div>
-    <div><label>Cost per kg</label><input name="cost_per_kg"></div>
-    <div><label>Print hours</label><input name="hours"></div>
-    <div><label>Machine rate (<span class="currency-label">{{ currency or "R" }}</span> / hour)</label><input name="hourly_rate"></div>
+    <div>
+        <label>Filament (g)</label>
+        <input name="grams" value="{{ form.get('grams','') }}">
+    </div>
+    <div>
+        <label>Cost per kg</label>
+        <input name="cost_per_kg" value="{{ form.get('cost_per_kg','') }}">
+    </div>
+    <div>
+        <label>Print hours</label>
+        <input name="hours" value="{{ form.get('hours','') }}">
+    </div>
+    <div>
+        <label>Machine rate (<span class="currency-label">{{ currency }}</span> / hour)</label>
+        <input name="hourly_rate" value="{{ form.get('hourly_rate','') }}">
+    </div>
 </div>
+
 
 <div class="section-title">Power & Labour</div>
 <div class="row">
-    <div><label>Power (W)</label><input name="power_watts"></div>
-    <div><label>Electricity / kWh</label><input name="electricity_rate"></div>
-    <div><label>Labour hours</label><input name="labour_hours"></div>
-    <div><label>Labour rate (<span class="currency-label">{{ currency or "R" }}</span> / hour)</label><input name="labour_rate"></div>
+    <div>
+        <label>Power (W)</label>
+        <input name="power_watts" value="{{ form.get('power_watts','') }}">
+    </div>
+    <div>
+        <label>Electricity / kWh</label>
+        <input name="electricity_rate" value="{{ form.get('electricity_rate','') }}">
+    </div>
+    <div>
+        <label>Labour hours</label>
+        <input name="labour_hours" value="{{ form.get('labour_hours','') }}">
+    </div>
+    <div>
+        <label>Labour rate (<span class="currency-label">{{ currency }}</span> / hour)</label>
+        <input name="labour_rate" value="{{ form.get('labour_rate','') }}">
+    </div>
 </div>
+
 
 <div class="section-title">Pricing</div>
 <div class="row">
-    <div><label>Margin (%)</label><input name="margin"></div>
-    <div><label>Waste (%)</label><input name="waste_percent" value="0"></div>
+    <div>
+        <label>Margin (%)</label>
+        <input name="margin" value="{{ form.get('margin','') }}">
+    </div>
+    <div>
+        <label>Waste (%)</label>
+        <input name="waste_percent" value="{{ form.get('waste_percent','0') }}">
+    </div>
 </div>
+
 
 {% if is_pro %}
 <label>Banking details</label>
-<textarea name="banking_details" rows="3"></textarea>
+<textarea name="banking_details" rows="3">{{ form.get('banking_details','') }}</textarea>
 {% else %}
 <div class="screen-only">🔒 Banking details available in Pro</div>
 {% endif %}
+
+
 
 <button type="submit">Calculate</button>
 </form>
