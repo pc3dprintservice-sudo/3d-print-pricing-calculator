@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request
 import uuid
 import os
+def to_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
 
 app = Flask(__name__)
 
@@ -16,6 +21,8 @@ IS_PRO = False   # Change to False for Free mode
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
+    form = request.form
+    currency = "R"   # ✅ DEFAULT for GET requests
 
     if request.method == "POST":
         # -------- Basic inputs --------
@@ -29,16 +36,17 @@ def index():
         banking_details = request.form.get("banking_details", "") if IS_PRO else ""
 
         # -------- Cost inputs --------
-        grams = float(request.form.get("grams", 0))
-        cost_per_kg = float(request.form.get("cost_per_kg", 0))
-        hours = float(request.form.get("hours", 0))
-        hourly_rate = float(request.form.get("hourly_rate", 0))
-        power_watts = float(request.form.get("power_watts", 0))
-        electricity_rate = float(request.form.get("electricity_rate", 0))
-        labour_hours = float(request.form.get("labour_hours", 0))
-        labour_rate = float(request.form.get("labour_rate", 0))
-        margin = float(request.form.get("margin", 0)) / 100
-        waste = float(request.form.get("waste_percent", 0)) / 100
+        grams = to_float(request.form.get("grams"))
+        cost_per_kg = to_float(request.form.get("cost_per_kg"))
+        hours = to_float(request.form.get("hours"))
+        hourly_rate = to_float(request.form.get("hourly_rate"))
+        power_watts = to_float(request.form.get("power_watts"))
+        electricity_rate = to_float(request.form.get("electricity_rate"))
+        labour_hours = to_float(request.form.get("labour_hours"))
+        labour_rate = to_float(request.form.get("labour_rate"))
+        margin = to_float(request.form.get("margin")) / 100
+        waste = to_float(request.form.get("waste_percent")) / 100
+
 
         # -------- Calculations --------
         filament_cost = (grams / 1000) * cost_per_kg
@@ -72,7 +80,14 @@ def index():
             "internal_cost": f"{currency}{internal_cost:,.2f}",
         }
 
-    return render_template("index.html", result=result, is_pro=IS_PRO)
+    return render_template(
+        "index.html",
+        result=result,
+        is_pro=IS_PRO,
+        currency=currency,
+        form=request.form
+    )
+
 
 
 # =========================
