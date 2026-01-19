@@ -91,8 +91,8 @@ def index():
 # =========================
 # PRO VERSION (PRIVATE LINK)
 # =========================
-@app.route("/pro", methods=["GET", "POST"])
-def pro():
+@app.route("/access-9f3kA2", methods=["GET", "POST"])
+def access_pro():
     result = None
 
     if request.method == "POST":
