@@ -47,7 +47,7 @@ def calculate(form, is_pro):
     internal_cost = (filament_cost + machine_cost + electricity_cost + labour_cost)
     internal_cost *= (1 + waste)
 
-   unit_price = internal_cost * (1 + markup)
+   unit_price = internal_cost * (1 + margin)
     total_price = unit_price * quantity
 
     return {
