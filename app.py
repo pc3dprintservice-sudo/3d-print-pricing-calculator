@@ -36,7 +36,7 @@ def calculate(form, is_pro):
     electricity_rate = to_float(form.get("electricity_rate"))
     labour_hours = to_float(form.get("labour_hours"))
     labour_rate = to_float(form.get("labour_rate"))
-    margin = to_float(form.get("margin")) / 100
+    markup = to_float(form.get("margin")) / 100
     waste = to_float(form.get("waste_percent")) / 100
 
     filament_cost = (grams / 1000) * cost_per_kg
@@ -47,9 +47,9 @@ def calculate(form, is_pro):
     internal_cost = (filament_cost + machine_cost + electricity_cost + labour_cost)
     internal_cost *= (1 + waste)
 
-    unit_price = internal_cost * (1 + margin)
+    unit_price = internal_cost * (1 + markup)
     total_price = unit_price * quantity
-
+    
     return {
         "invoice_number": str(uuid.uuid4())[:8].upper(),
         "business_name": business_name,
