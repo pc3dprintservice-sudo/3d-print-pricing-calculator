@@ -22,6 +22,7 @@ def calculate(form, is_pro):
     currency = form.get("currency", "R")
 
     business_name = form.get("business_name", "")
+    customer_name = form.get("customer_name", "")
     description = form.get("description", "")
     quantity = int(form.get("quantity", 1) or 1)
 
@@ -53,6 +54,7 @@ def calculate(form, is_pro):
     return {
         "invoice_number": str(uuid.uuid4())[:8].upper(),
         "business_name": business_name,
+        "customer_name": customer_name,
         "description": description,
         "filament_type": filament_type,
         "banking_details": banking_details,
