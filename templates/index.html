@@ -319,6 +319,12 @@ input, select, textarea {
     {% endif %}
 
     <h3>Invoice</h3>
+    {% if result.customer_name %}
+    <div class="line">
+    <span>Customer</span>
+    <span>{{ result.customer_name }}</span>
+    </div>
+    {% endif %}
 
     <div class="line"><span>Invoice #</span><span>{{ result.invoice_number }}</span></div>
 
